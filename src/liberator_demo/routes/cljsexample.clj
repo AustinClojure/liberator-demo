@@ -3,7 +3,7 @@
             [liberator-demo.views.layout :as layout]))
 
 (def messages
-  (atom 
+  (atom
     [{:message "Hello world"
       :user    "Foo"}
      {:message "Ajax is fun"
