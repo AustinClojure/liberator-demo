@@ -43,4 +43,5 @@
          :destroy liberator-demo.handler/destroy
          :nrepl {:start? true}}
 
-  :repl-options {:init-ns liberator-demo.repl :nrepl-middleware [lighttable.nrepl.handler/lighttable-ops]})
+  :repl-options {:init-ns liberator-demo.repl
+                 :nrepl-middleware [lighttable.nrepl.handler/lighttable-ops]})

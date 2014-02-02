@@ -22,4 +22,6 @@
                  (where {:id id})
                  (limit 1))))
 
+(defn get-users []
+  (select users))
 

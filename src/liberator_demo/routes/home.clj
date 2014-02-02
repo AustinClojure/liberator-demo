@@ -1,10 +1,10 @@
 (ns liberator-demo.routes.home
-  (:use compojure.core)
+  (:use [compojure.core])
   (:require [liberator-demo.views.layout :as layout]
             [liberator-demo.util :as util]
             [liberator.core :refer [resource defresource]]
-            [liberator-demo.models.db :as db]))
-
+            [liberator-demo.models.db :as db]
+            [taoensso.timbre :refer [debug]]))
 
 (defn home-page []
   (layout/render
@@ -27,72 +27,34 @@
 (defroutes home-routes
   (GET "/" [] (home-page))
   (GET "/about" [] (about-page))
+
   ;; REST Resources
   ; (ANY "/users/:txt" [txt] (parameter txt))
+
   (ANY "/users" [usr-json]
        (resource
          :allowed-methods [:post :get]
-         :available-media-types ["text/html"]
+         :available-media-types ["text/html" "application/json" "application/edn"]
          :handle-ok (fn [ctx]
-            ;(debug (format (str "\n\n\thandle-ok got %s") (:request ctx)))
-            ;(format  (str "<html>Post text/plain to this resource.<br>\n"
-            ;              "There are %d posts at the moment. You posted %s") 4 (:request ctx)))
                       (db/get-users))
          :post! (fn [ctx]
-                  ;(debug (str ctx))
                   (let [body (get-in ctx [:request :body-params])]
-                     (debug (format (str "\n\n\tpost! got a body of %s") body))
-                     ;; *** Put database insert here ***
-                      (db/create-user body)
-                     ctx))
+                    (debug (format (str "\n\n\tpost! got a body of %s") body))
+                    (db/create-user body)
+                    ctx))
+
          ;; actually http requires absolute urls for redirect but let's
          ;; keep things simple.
          :post-redirect? (fn [ctx]
-                           ; (debug (format (str "\n\n\tpost-redirct called with %s") ctx))
-                           ;;; :context comes from the Immutant app server and gives us our
-                           ;;; top-level context-path for our web app.
-                           {:location (format (str "%s/users/%s") (get-in ctx [:request :context]) (get-in ctx [:request :body-params :id]))})))
+                           {:location (format (str "%s/users/%s")
+                                              (get-in ctx [:request :context])
+                                              (get-in ctx [:request :body-params :id]))})))
+
   (ANY "/users/:x" [x]
        (resource
          :allowed-methods [:get]
-         :available-media-types ["text/html"]
+         :available-media-types ["text/html" "application/json" "application/edn"]
          :exists? (fn [ctx]
-                    ;(debug (format (str "\n\n\tIn redirect postbox/:x called with %s") x))
                     (if-let [d (db/get-user x)] {::id d}))
-         :handle-ok ::id))
-
-  (ANY "/locations" [location-json]
-       (resource
-         :allowed-methods [:post :get]
-         :available-media-types ["text/html"]
-         :handle-ok (fn [ctx]
-                      ;(debug (format (str "\n\n\thandle-ok got %s") (:request ctx)))
-                      ;(format  (str "<html>Post text/plain to this resource.<br>\n"
-                      ;              "There are %d posts at the moment. You posted %s") 4 (:request ctx)))
-                      (db/get-locations))
-         :post! (fn [ctx]
-                  ;(debug (str ctx))
-                  (let [body (get-in ctx [:request :body-params])]
-                    (debug (format (str "\n\n\tpost! got a body of %s") body))
-                    ;; *** Put database insert here ***
-                    (db/create-location body)
-                    ctx))
-         ;; actually http requires absolute urls for redirect but let's
-         ;; keep things simple.
-         :post-redirect? (fn [ctx]
-                           ; (debug (format (str "\n\n\tpost-redirct called with %s") ctx))
-                           ;;; :context comes from the Immutant app server and gives us our
-                           ;;; top-level context-path for our web app.
-                           {:location (format (str "%s/locations/%s") (get-in ctx [:request :context]) (get-in ctx [:request :body-params :my_phone_number]))})))
-  (ANY "/locations/:x" [x]
-       (resource
-         :allowed-methods [:get]
-         :available-media-types ["text/html"]
-         :exists? (fn [ctx]
-                    ;(debug (format (str "\n\n\tIn redirect postbox/:x called with %s") x))
-                    (if-let [d (db/get-location x)] {:my_phone_number d}))
-         :handle-ok ::id))
-
-
-  )
+         :handle-ok ::id)))
 
