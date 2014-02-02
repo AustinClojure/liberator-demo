@@ -1,17 +1,19 @@
 (ns liberator-demo.models.schema
-  (:require [clojure.java.jdbc :as sql]
+  (:require [clojure.string :as string]
+            [clojure.java.jdbc :as sql]
             [noir.io :as io]))
 
-(def db-store "site.db")
+(def db-store "demo")
 
 (def db-spec {:classname "org.h2.Driver"
               :subprotocol "h2"
-              :subname (str (io/resource-path) db-store)
+              :subname db-store
               :user "sa"
               :password ""
               :make-pool? true
-              :naming {:keys clojure.string/lower-case
-                       :fields clojure.string/upper-case}})
+              :naming {:keys   string/lower-case
+                       :fields string/upper-case}})
+
 (defn initialized?
   "checks to see if the database schema is present"
   []

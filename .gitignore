@@ -9,5 +9,5 @@ pom.xml
 /.env
 *.log
 .nrepl-*
-site.db.*
+*.h2.db
 site.js
