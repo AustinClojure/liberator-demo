@@ -17,7 +17,9 @@
                  [cljs-ajax "0.2.3"]
                  [lib-noir "0.8.0"]
                  [compojure "1.1.6"]
-                 [selmer "0.5.9"]]
+                 [selmer "0.5.9"]
+                 [liberator "0.10.0"]
+                 [lein-light-nrepl "0.0.6"]]
 
   :plugins [[lein-ring "0.8.10"]
             [lein-environ "0.4.0"]
@@ -41,4 +43,4 @@
          :destroy liberator-demo.handler/destroy
          :nrepl {:start? true}}
 
-  :repl-options {:init-ns liberator-demo.repl})
+  :repl-options {:init-ns liberator-demo.repl :nrepl-middleware [lighttable.nrepl.handler/lighttable-ops]})
