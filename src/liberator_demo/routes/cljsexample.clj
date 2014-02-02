@@ -3,11 +3,10 @@
             [liberator-demo.views.layout :as layout]))
 
 (def messages
-  (atom
-    [{:message "Hello world"
-      :user    "Foo"}
-     {:message "Ajax is fun"
-      :user    "Bar"}]))
+  (atom [{:message "Hello world"
+          :user    "Foo"}
+         {:message "Ajax is fun"
+          :user    "Bar"}]))
 
 (defroutes cljs-routes
   (GET "/cljsexample" [] (layout/render "cljsexample.html"))
