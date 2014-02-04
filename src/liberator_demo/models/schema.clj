@@ -22,11 +22,11 @@
 (defn create-users-table []
   (sql/with-connection db-spec
     (sql/create-table :users
-                      [:id "varchar(20) PRIMARY KEY"]
-                      [:email "varchar(30)"]
-                      [:admin :boolean]
-                      [:pass "varchar(100)"]
-                      [:api_key "varchar(16)"])))
+                      [:login  "varchar(32) PRIMARY KEY"]
+                      [:email  "varchar(128)"]
+                      [:active "boolean not null"]
+                      [:pass   "varchar(128) not null"]
+                      [:apikey "char(36) unique"])))
 
 (defn create-games-table []
   (sql/with-connection db-spec
@@ -36,7 +36,7 @@
                       [:description "varchar(1024)"]
                       [:url "varchar(256)"]
                       [:owner "varchar(20) not null"]
-                      ["foreign key (owner) references users(id)"])))
+                      ["foreign key (owner) references users(login)"])))
 
 (defn create-scores-table []
   (sql/with-connection db-spec
@@ -57,3 +57,5 @@
   (create-users-table)
   (create-games-table)
   (create-scores-table))
+
+
