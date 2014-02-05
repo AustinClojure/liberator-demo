@@ -22,7 +22,7 @@
 (defn create-users-table []
   (sql/with-connection db-spec
     (sql/create-table :users
-                      [:login  "varchar(32) PRIMARY KEY"]
+                      [:login  "char(32) PRIMARY KEY"]
                       [:email  "varchar(128)"]
                       [:active "boolean not null"]
                       [:pass   "varchar(128) not null"]
@@ -35,7 +35,7 @@
                       [:name "varchar(128) not null"]
                       [:description "varchar(1024)"]
                       [:url "varchar(256)"]
-                      [:owner "varchar(20) not null"]
+                      [:owner "char(32) not null"]
                       ["foreign key (owner) references users(login)"])))
 
 (defn create-scores-table []
