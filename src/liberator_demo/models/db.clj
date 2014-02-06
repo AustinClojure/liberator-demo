@@ -45,7 +45,7 @@
   (select :games (where (= :id game-id))))
 
 (defn games-by-owner [login]
-  (select :games (where (= :owner login))))`
+  (select :games (where (= :owner login))))
 
 (defn scores-by-game [game-id]
   (select :scores (where (= :game game-id))))
