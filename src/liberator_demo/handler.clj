@@ -1,16 +1,15 @@
 (ns liberator-demo.handler
   (:require [compojure.core :refer [defroutes]]
+            [compojure.route :as route]
+            [environ.core :refer [env]]
             [liberator-demo.routes.home :refer [home-routes]]
             [liberator-demo.middleware :as middleware]
-            [noir.util.middleware :refer [app-handler]]
-            [compojure.route :as route]
-            [taoensso.timbre :as timbre]
-            [taoensso.timbre.appenders.rotor :as rotor]
-            [selmer.parser :as parser]
-            [environ.core :refer [env]]
-
             [liberator-demo.routes.api :refer [api-routes]]
-            [liberator-demo.routes.cljsexample :refer [cljs-routes]]))
+            [liberator-demo.routes.cljsexample :refer [cljs-routes]]
+            [noir.util.middleware :refer [app-handler]]
+            [selmer.parser :as parser]
+            [taoensso.timbre :as timbre]
+            [taoensso.timbre.appenders.rotor :as rotor]))
 
 (defroutes app-routes
   (route/resources "/")
@@ -40,7 +39,10 @@
                 cljs-routes
                 home-routes
                 app-routes]
-               :middleware [middleware/template-error-page middleware/log-request]
+
+               :middleware [#'middleware/my-trace
+                            middleware/template-error-page
+                            middleware/log-request]
                :access-rules []
                :formats [:json-kw :edn]))
 

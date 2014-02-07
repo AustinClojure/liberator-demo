@@ -1,7 +1,8 @@
 (ns liberator-demo.middleware
-  (:require [taoensso.timbre :as timbre]
+  (:require [environ.core :refer [env]]
+            [liberator.dev]
             [selmer.parser :as parser]
-            [environ.core :refer [env]]))
+            [taoensso.timbre :as timbre]))
 
 (defn log-request [handler]
   (if (env :dev)
@@ -22,3 +23,16 @@
                :body (parser/render error-template data)}
               (throw ex))))))
     handler))
+
+(def xtrace "X-Liberator-Trace")
+
+(defn my-trace [handler]
+  (let [trace-handler (liberator.dev/wrap-trace handler :header)]
+    (fn [request]
+      (let [this-handler (if (get-in request [:params :trace])
+                           trace-handler
+                           handler)]
+        (when-let [response (this-handler request)]
+          (doseq [v (get-in response [:headers xtrace])]
+            (println "*" v))
+          (update-in response [:headers] dissoc xtrace))))))
