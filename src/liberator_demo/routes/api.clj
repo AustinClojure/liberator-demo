@@ -28,6 +28,22 @@
     (db/scores-by-game (:id game))))
 
 
+(defn parse-score [text]
+  (when text
+    (try
+      (Long/parseLong text)
+      (catch NumberFormatException _ nil))))
+
+
+(defn post-score [ctx]
+  (let [score (get-in ctx [:request :params :score])
+        name  (get-in ctx [:request :params :name])
+        game  (:game ctx)]
+        (when (and score name game)
+          (do
+            (db/add-score (:id game) score name)
+            ctx))))
+
 (def api-routes
   (context "/api" []
    (ANY "/test" []
@@ -61,14 +77,9 @@
          :available-media-types api-media-types
          :authorized? auth-apikey
          :exists? game-exists
-         :post! (fn [ctx]
-                  (let [body (get-in ctx [:request :body])]
-                    (println "--" (get-in ctx [:request :headers]))
-                    (println "--" (get-in ctx [:request :query-params]))
-                    (println "--" (get-in ctx [:request :params]))
-                    (println "POST! [" (slurp body) "]"))
-                  ctx)
-         :handle-ok scores-for-game))
+         :post! post-score
+         :handle-ok scores-for-game
+         :handle-created scores-for-game))
 
 
    ;; ----------------------------------------

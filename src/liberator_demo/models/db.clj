@@ -42,13 +42,18 @@
   (insert :games (values game)))
 
 (defn game-by-id [game-id]
-  (select :games (where (= :id game-id))))
+  (first (select :games (where (= :id game-id)))))
 
 (defn games-by-owner [login]
   (select :games (where (= :owner login))))
 
 (defn scores-by-game [game-id]
   (select :scores (where (= :game game-id))))
+
+(defn add-score [game-id score name]
+  (insert :scores (values {:score score
+                           :initials name
+                           :game game-id})))
 
 ;; ----------------------------------------
 
