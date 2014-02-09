@@ -46,4 +46,5 @@
   :repl-options {:init-ns liberator-demo.repl
                  :nrepl-middleware [lighttable.nrepl.handler/lighttable-ops]}
 
-  :aliases {"make-db" ["run" "-m" "liberator-demo.tools.make-db"]})
+  :aliases {"make-db" ["run" "-m" "liberator-demo.tools.make-db"]
+            "users"   ["run" "-m" "liberator-demo.tools.users"]})

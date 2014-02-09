@@ -12,6 +12,8 @@ Liberator demo for Austin Clojure Meetup
 
 `lein ring server-headless`
 
+## to list users
 
+`lein users`
 
 
