@@ -48,7 +48,12 @@
   (select :games (where (= :owner login))))
 
 (defn scores-by-game [game-id]
-  (select :scores (where (= :game game-id))))
+  (let [size 10]
+    (select :scores
+            (fields :initials :score)
+            (where (= :game game-id))
+            (order :score :DESC)
+            (limit size))))
 
 (defn add-score [game-id score name]
   (insert :scores (values {:score score

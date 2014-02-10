@@ -2,7 +2,7 @@
   (:use [compojure.core])
   (:require [liberator-demo.views.layout :as layout]
             [liberator-demo.util :as util]
-            [liberator.core :refer [resource defresource]]
+            [liberator.core :refer [resource defresource handle-unauthorized]]
             [liberator-demo.models.db :as db]
             [taoensso.timbre :refer [debug]]))
 
@@ -17,7 +17,8 @@
 (defn game-exists [ctx]
   (let [game-id (get-in ctx [:request :params :game])]
     (when-let [game (db/game-by-id game-id)]
-      (assoc ctx :game game))))
+      (if (= (:owner game) (get-in ctx [:user :login]))
+        (assoc ctx :game game)))))
 
 (defn games-for-user [ctx]
   (when-let [user (:user ctx)]
@@ -27,13 +28,11 @@
   (when-let [game (:game ctx)]
     (db/scores-by-game (:id game))))
 
-
 (defn parse-score [text]
   (when text
     (try
       (Long/parseLong text)
       (catch NumberFormatException _ nil))))
-
 
 (defn post-score [ctx]
   (let [score (get-in ctx [:request :params :score])
